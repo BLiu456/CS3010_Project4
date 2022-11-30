@@ -9,18 +9,19 @@ Due Date: 12/04/2022
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <iomanip>
 #include <vector>
 using namespace std;
 
 //Function Prototypes here
 vector<vector<double>> getData();
-void divDif(vector<vector<double>>);
+void newtonPoly(vector<vector<double>>);
 void printVect(vector<vector<double>>);
 
 int main()
 {
     vector<vector<double>> data = getData();
-    divDif(data);
+    newtonPoly(data);
 }
 
 vector<vector<double>> getData()
@@ -35,7 +36,7 @@ vector<vector<double>> getData()
     if (!dataFile)
     {
         cout << "Could not open file, ending program.\n";
-        exit;
+        exit(1);
     }
     
     string rowData, hold = "";
@@ -53,8 +54,9 @@ vector<vector<double>> getData()
     return data;
 }
 
-void divDif(vector<vector<double>> x)
+void newtonPoly(vector<vector<double>> x)
 {
+    //The divided difference calculations
     int n = x.at(1).size();
     vector<vector<double>> a;
     a.resize(n);
@@ -72,7 +74,31 @@ void divDif(vector<vector<double>> x)
         }
     }
 
-    printVect(a);
+    //Printing divided difference table
+    cout << "x        ";
+    for (int i = 0; i < n; i++)
+    {
+        cout << "f[";
+        for (int j = 0; j < i; j++)
+        {
+            cout << "'";
+        }
+        cout << "]     ";
+    }
+    cout << "\n---------------------------------------------------------------\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << fixed << showpoint << setprecision(3) << x.at(0).at(i) << "     ";
+        for (int j = 0; j < n - i; j++)
+        {
+            cout << a.at(i).at(j) << "     ";
+        }
+        cout << endl;
+    }
+
+    //Creating the polynomial
+
 }
 
 void printVect(vector<vector<double>> v)
