@@ -3,6 +3,10 @@ Name: Benjamin Liu
 Class: CS3010
 Assignmen: Project 4
 Due Date: 12/04/2022
+Note: Due to how numbers are represented on machines, some numbers may not be calculated or displayed accurately.
+      The divided difference table can also easily be misalgined depending on how many digits are in each number,
+      but the numbers should still be displayed in their proper orders regardless.
+      Numbers are rounded to 3 decimal points.
 */
 
 #include <iostream>
@@ -17,8 +21,7 @@ using namespace std;
 vector<vector<double>> getData();
 void lagrange(vector<vector<double>>);
 void newtonPoly(vector<vector<double>>);
-void simplifyPoly(vector<vector<double>>);
-void printVect(vector<vector<double>>);
+void simplifyPoly(vector<vector<double>>); //This specifically simplifies the polynomial from Newtons since its easier compared to Lagrange
 
 int main()
 {
@@ -45,24 +48,24 @@ vector<vector<double>> getData()
     }
     
     string rowData, hold = "";
-    while (getline(dataFile, rowData))
+    while (getline(dataFile, rowData)) //Gets data row by row until eof
     {
-        istringstream ss(rowData);
+        istringstream ss(rowData); //Puts the rows of number into a string stream so that we can pull each individual numbers that are seperated by spaces
         vector<double> temp;
-        while (ss >> hold)
+        while (ss >> hold) //Takes the individual numbers
         {
-            temp.push_back(stod(hold));
+            temp.push_back(stod(hold));//Convert from string to double and push into the vector
         }
         data.push_back(temp);
     }
 
-    return data;
+    return data; //data should have all the x values on row 0 and the f(x) values on row 1.
 }
 
 void lagrange(vector<vector<double>> x)
 {
     vector<double> d;
-    for (int i = 0; i < x.at(0).size(); i++)
+    for (int i = 0; i < x.at(0).size(); i++) //Calculating the denominator at each term
     {
         double val = 1;
         for (int j = 0; j < x.at(0).size(); j++)
@@ -74,7 +77,8 @@ void lagrange(vector<vector<double>> x)
         }
         d.push_back(val);
     }
-    cout << "Lagrange polynomial:\n";
+    //Displaying the polynomial
+    cout << "Lagrange interpolated polynomial:\n";
     for (int i = 0; i < x.at(0).size(); i++)
     {
         double c = x.at(1).at(i) / d.at(i);
@@ -154,7 +158,7 @@ void newtonPoly(vector<vector<double>> x)
     }
 
     //Creating the polynomial
-    vector<vector<double>> poly;
+    vector<vector<double>> poly; //Column 0 of poly stores the first values of the f primes from the table, and the x is stored in column 1
     for (int i = 0; i < a.size(); i++)
     {
         vector<double> temp;
@@ -165,7 +169,7 @@ void newtonPoly(vector<vector<double>> x)
         }
         poly.push_back(temp);
     }
-    //Displaying the polynomical
+    //Displaying the polynomial
     cout << "\nNetwon's interpolated polynomial:\n";
     cout << poly.at(0).at(0);
     for (int i = 1; i < poly.size(); i++)
@@ -179,7 +183,7 @@ void newtonPoly(vector<vector<double>> x)
             cout << " + ";
         }
         cout << abs(poly.at(i).at(0));
-        for (int j = 1; j <= i; j++)
+        for (int j = 1; j <= i; j++) //Because the polynomial is built off the previous term, we start at row 1 of poly and build our way down to row i.
         {
             cout << "(x";
             if (poly.at(j).at(1) < 0)
@@ -193,20 +197,23 @@ void newtonPoly(vector<vector<double>> x)
             cout << abs(poly.at(j).at(1)) << ")";
         }
     }
-
+    //Simplifying Newton's polynomial
     simplifyPoly(poly);
 }
 
+/*Assumes a Newton polynomial is being passed to it. The algorithm is based on the fact that in each term of a Newton polynomial, it builds off
+from the previous term, i.e. (x-1) + (x-1)(x-2), where the (x-1) is considered the first term and (x-1)(x-2) is the second term. Because of this we
+can simply look back at what the previous term was and do the necessary calculations to figure out the new term*/
 void simplifyPoly(vector<vector<double>> poly)
 {
     int n = poly.size();
-    vector<vector<double>> terms;
+    vector<vector<double>> terms; //Will store each polynomial at each term row by row, the highest degree of that polynomial will match the row number
     terms.resize(n);
-    terms.at(0).push_back(1);
-    terms.at(1).push_back(poly.at(1).at(1));
-    terms.at(1).push_back(1);
+    terms.at(0).push_back(1); //The highest degree of the row will always be 1
+    terms.at(1).push_back(poly.at(1).at(1)); 
+    terms.at(1).push_back(1); //After this push, row 1 should mimic what (a - x) looks like
 
-    for (int i = 2; i < n; i++)
+    for (int i = 2; i < n; i++) //Calculating the rest of the rows, where these terms will build off from the term one row above them
     {
         terms.at(i).push_back(terms.at(i - 1).at(0) * poly.at(i).at(1));
         for (int j = 1; j < i; j++)
@@ -217,7 +224,7 @@ void simplifyPoly(vector<vector<double>> poly)
         terms.at(i).push_back(1);
     }
 
-    vector<double> simpPoly;
+    vector<double> simpPoly; //After figuring out what the polynomials are multiply them with the coefficients stored in the columns of poly
     for (int j = 0; j < terms.size(); j++)
     {
         double val = 0;
@@ -253,16 +260,4 @@ void simplifyPoly(vector<vector<double>> poly)
         
     }
     cout << endl;
-}
-
-void printVect(vector<vector<double>> v)
-{
-    for (int i = 0; i < v.size(); i++)
-    {
-        for (int j = 0; j < v.at(i).size(); j++)
-        {
-            cout << v.at(i).at(j) << " ";
-        }
-        cout << endl;
-    }
 }
