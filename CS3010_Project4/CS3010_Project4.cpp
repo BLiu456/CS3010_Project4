@@ -7,6 +7,7 @@ Note: Due to how numbers are represented on machines, some numbers may not be ca
       The divided difference table can also easily be misalgined depending on how many digits are in each number,
       but the numbers should still be displayed in their proper orders regardless.
       Numbers are rounded to 3 decimal points.
+      For the file inputs, if simply giving the file name is not enough to find it, you may need to specify the whole file path.
 */
 
 #include <iostream>
