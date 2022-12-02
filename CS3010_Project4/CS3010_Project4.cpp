@@ -17,6 +17,7 @@ using namespace std;
 vector<vector<double>> getData();
 void lagrange(vector<vector<double>>);
 void newtonPoly(vector<vector<double>>);
+void simplifyPoly(vector<vector<double>>);
 void printVect(vector<vector<double>>);
 
 int main()
@@ -25,6 +26,7 @@ int main()
     newtonPoly(data);
     cout << endl;
     lagrange(data);
+    cout << endl;
 }
 
 vector<vector<double>> getData()
@@ -146,7 +148,7 @@ void newtonPoly(vector<vector<double>> x)
         cout << fixed << showpoint << setprecision(3) << x.at(0).at(i) << "     ";
         for (int j = 0; j < n - i; j++)
         {
-            cout << a.at(i).at(j) << "     ";
+            cout << a.at(j).at(i) << "     ";
         }
         cout << endl;
     }
@@ -159,7 +161,7 @@ void newtonPoly(vector<vector<double>> x)
         temp.push_back(a.at(i).at(0));
         if (i != 0)
         {
-            temp.push_back(x.at(0).at(i-1));
+            temp.push_back(-1 * x.at(0).at(i-1));
         }
         poly.push_back(temp);
     }
@@ -182,15 +184,75 @@ void newtonPoly(vector<vector<double>> x)
             cout << "(x";
             if (poly.at(j).at(1) < 0)
             {
-                cout << " + ";
+                cout << " - ";
             }
             else if (poly.at(j).at(1) >= 0)
             {
-                cout << " - ";
+                cout << " + ";
             }
             cout << abs(poly.at(j).at(1)) << ")";
         }
     }
+
+    simplifyPoly(poly);
+}
+
+void simplifyPoly(vector<vector<double>> poly)
+{
+    int n = poly.size();
+    vector<vector<double>> terms;
+    terms.resize(n);
+    terms.at(0).push_back(1);
+    terms.at(1).push_back(poly.at(1).at(1));
+    terms.at(1).push_back(1);
+
+    for (int i = 2; i < n; i++)
+    {
+        terms.at(i).push_back(terms.at(i - 1).at(0) * poly.at(i).at(1));
+        for (int j = 1; j < i; j++)
+        {
+            double val = (poly.at(i).at(1) * terms.at(i - 1).at(j)) + terms.at(i - 1).at(j - 1);
+            terms.at(i).push_back(val);
+        }
+        terms.at(i).push_back(1);
+    }
+
+    vector<double> simpPoly;
+    for (int j = 0; j < terms.size(); j++)
+    {
+        double val = 0;
+        for (int i = j; i < terms.size(); i++)
+        {
+            val += terms.at(i).at(j) * poly.at(i).at(0);         
+        }
+        simpPoly.push_back(val);
+    }
+
+    //Printing simplified polynomial
+    cout << "\n\nSimplified Polynomial:\n";
+    cout << simpPoly.at(simpPoly.size() - 1) << "x^" << simpPoly.size() - 1;
+    for (int i = simpPoly.size() - 2; i >= 0; i--)
+    {
+        if (simpPoly.at(i) < 0)
+        {
+            cout << " - ";
+        }
+        else if (simpPoly.at(i) >= 0)
+        {
+            cout << " + ";
+        }
+
+        if (i != 0)
+        {
+            cout << abs(simpPoly.at(i)) << "x^" << i;
+        }
+        else
+        {
+            cout << abs(simpPoly.at(i));
+        }
+        
+    }
+    cout << endl;
 }
 
 void printVect(vector<vector<double>> v)
