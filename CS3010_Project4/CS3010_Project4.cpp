@@ -111,7 +111,7 @@ void lagrange(vector<vector<double>> x)
             {
                 cout << " - ";
             }
-            cout << x.at(0).at(j) << ")";
+            cout << abs(x.at(0).at(j)) << ")";
         }
     }
 }
