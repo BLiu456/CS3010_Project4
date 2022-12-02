@@ -8,6 +8,7 @@ Note: Due to how numbers are represented on machines, some numbers may not be ca
       but the numbers should still be displayed in their proper orders regardless.
       Numbers are rounded to 3 decimal points.
       For the file inputs, if simply giving the file name is not enough to find it, you may need to specify the whole file path.
+      Program should work with 50 points, and although the project description says at most 50, my program should work beyond that even if it takes a while.
 */
 
 #include <iostream>
@@ -171,7 +172,7 @@ void newtonPoly(vector<vector<double>> x)
         poly.push_back(temp);
     }
     //Displaying the polynomial
-    cout << "\nNetwon's interpolated polynomial:\n";
+    cout << "\nNewton's interpolated polynomial:\n";
     cout << poly.at(0).at(0);
     for (int i = 1; i < poly.size(); i++)
     {
